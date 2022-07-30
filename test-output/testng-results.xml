@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2022-07-30T22:17:17 CEST" name="Default suite" finished-at="2022-07-30T22:17:36 CEST" duration-ms="18356">
+    <groups>
+    </groups>
+    <test started-at="2022-07-30T22:17:17 CEST" name="Default test" finished-at="2022-07-30T22:17:36 CEST" duration-ms="18356">
+      <class name="TestCases.IMDbTest">
+        <test-method is-config="true" signature="openBrowser()[pri:0, instance:TestCases.IMDbTest@51e5fc98]" started-at="2022-07-30T22:17:18 CEST" name="openBrowser" finished-at="2022-07-30T22:17:29 CEST" duration-ms="11528" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- openBrowser -->
+        <test-method signature="imdbTest()[pri:0, instance:TestCases.IMDbTest@51e5fc98]" started-at="2022-07-30T22:17:29 CEST" name="imdbTest" finished-at="2022-07-30T22:17:35 CEST" duration-ms="6146" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- imdbTest -->
+        <test-method is-config="true" signature="closeBrowser()[pri:0, instance:TestCases.IMDbTest@51e5fc98]" started-at="2022-07-30T22:17:35 CEST" name="closeBrowser" finished-at="2022-07-30T22:17:36 CEST" duration-ms="630" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- closeBrowser -->
+      </class> <!-- TestCases.IMDbTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
