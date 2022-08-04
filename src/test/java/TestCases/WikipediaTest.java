@@ -8,6 +8,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.testng.Assert;
 import org.testng.annotations.*;
+import org.testng.asserts.SoftAssert;
 
 import pojo.BrowserCode;
 import pom.WikiPage;
@@ -16,7 +17,9 @@ import utility.Screenshot;
 public class WikipediaTest {
 	WebDriver driver;
 	WikiPage wikiPage;
-	String Exp_PageTitle="Pushpa: The Rise - Wikipedia";
+	String exp_pageTitle="Pushpa: The Rise - Wikipedia";
+	String exp_date="17 December 2021";
+	String exp_country="India";
 	
 	@BeforeMethod
 	public void openBrowser() {
@@ -25,16 +28,22 @@ public class WikipediaTest {
 	@Test//Testcase
 	public void WikiTest() throws InterruptedException {
 		wikiPage=new WikiPage(driver);
-		wikiPage.searchOnWiki("anek", driver);
-		String Act_PageTitle=wikiPage.displayTitle(driver);
-		System.out.println(Act_PageTitle);
-		//Assert.assertEquals(Act_PageTitle,Exp_PageTitle);
+		wikiPage.searchOnWiki("Pushpa: the rise", driver);
+		String act_pageTitle=wikiPage.displayTitle(driver);
+		System.out.println(act_pageTitle);
+		Assert.assertEquals(act_pageTitle,exp_pageTitle);
 		wikiPage.diplayTable(driver);
+		
 		//To get Date
-		wikiPage.getDate(); 
+		String date=wikiPage.getDate(); 
+		SoftAssert soft=new SoftAssert();
+		soft.assertEquals(exp_date, date);
 		
 		//To get the country
-		wikiPage.getCountry();
+		String act_country=wikiPage.getCountry();
+		soft.assertEquals(act_country, exp_country);
+		soft.assertAll();
+		System.out.println("All assertions passed");
 	}
 	@AfterMethod//To close the browser and take the screenshot
 	public void closeBrowser() throws IOException {

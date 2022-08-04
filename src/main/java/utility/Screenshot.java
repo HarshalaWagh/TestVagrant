@@ -15,7 +15,7 @@ public class Screenshot {
 
 			String d=Screenshot.dateTimeFormate();
 			File source=((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-			File dest=new File("C:\\Users\\harsh\\eclipse-workspace\\MovieDetails\\Screenshots\\"+name+ d+ ".png");
+			File dest=new File("C:\\JavaWorkspace\\New\\TestVagrant\\Screenshots\\"+name+ d+ ".png");
 			FileHandler.copy(source,dest);
 		}
 

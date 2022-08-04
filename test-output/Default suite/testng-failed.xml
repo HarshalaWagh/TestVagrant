@@ -6,6 +6,7 @@
       <class name="TestCases.IMDbTest">
         <methods>
           <include name="imdbTest"/>
+          <include name="closeBrowser"/>
           <include name="openBrowser"/>
         </methods>
       </class> <!-- TestCases.IMDbTest -->

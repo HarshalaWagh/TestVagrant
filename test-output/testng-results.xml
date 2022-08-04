@@ -2,20 +2,20 @@
 <testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2022-07-30T22:17:17 CEST" name="Default suite" finished-at="2022-07-30T22:17:36 CEST" duration-ms="18356">
+  <suite started-at="2022-08-04T10:50:31 CEST" name="Default suite" finished-at="2022-08-04T10:50:47 CEST" duration-ms="15801">
     <groups>
     </groups>
-    <test started-at="2022-07-30T22:17:17 CEST" name="Default test" finished-at="2022-07-30T22:17:36 CEST" duration-ms="18356">
+    <test started-at="2022-08-04T10:50:31 CEST" name="Default test" finished-at="2022-08-04T10:50:47 CEST" duration-ms="15801">
       <class name="TestCases.IMDbTest">
-        <test-method is-config="true" signature="openBrowser()[pri:0, instance:TestCases.IMDbTest@51e5fc98]" started-at="2022-07-30T22:17:18 CEST" name="openBrowser" finished-at="2022-07-30T22:17:29 CEST" duration-ms="11528" status="PASS">
+        <test-method is-config="true" signature="openBrowser()[pri:0, instance:TestCases.IMDbTest@3bb9a3ff]" started-at="2022-08-04T10:50:31 CEST" name="openBrowser" finished-at="2022-08-04T10:50:39 CEST" duration-ms="7941" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- openBrowser -->
-        <test-method signature="imdbTest()[pri:0, instance:TestCases.IMDbTest@51e5fc98]" started-at="2022-07-30T22:17:29 CEST" name="imdbTest" finished-at="2022-07-30T22:17:35 CEST" duration-ms="6146" status="PASS">
+        <test-method signature="imdbTest()[pri:0, instance:TestCases.IMDbTest@3bb9a3ff]" started-at="2022-08-04T10:50:39 CEST" name="imdbTest" finished-at="2022-08-04T10:50:47 CEST" duration-ms="7290" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- imdbTest -->
-        <test-method is-config="true" signature="closeBrowser()[pri:0, instance:TestCases.IMDbTest@51e5fc98]" started-at="2022-07-30T22:17:35 CEST" name="closeBrowser" finished-at="2022-07-30T22:17:36 CEST" duration-ms="630" status="PASS">
+        <test-method is-config="true" signature="closeBrowser()[pri:0, instance:TestCases.IMDbTest@3bb9a3ff]" started-at="2022-08-04T10:50:47 CEST" name="closeBrowser" finished-at="2022-08-04T10:50:47 CEST" duration-ms="520" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- closeBrowser -->
