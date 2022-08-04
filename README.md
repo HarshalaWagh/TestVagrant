@@ -9,10 +9,4 @@ Step by step instructions on how to run the code:
 8. Add your chromedriver file location path in System.setProperty() method
 9. Run the testcases
 10. It will be executed as per the commands given.
-# Movie-Details-Assignment
-# abacus
-# abacus
-# abacus
-# abacus
-# abacus
-# abacus
+
