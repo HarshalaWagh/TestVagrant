@@ -28,7 +28,7 @@ public class IMDbTest {
 	public void imdbTest() throws InterruptedException {
 		
 		imdbPage=new IMDBPage(driver);
-		imdbPage.getSearch("Pushpa",driver);
+		imdbPage.getSearch("Pushpa: the rise",driver);
 		Boolean display=imdbPage.scrollToDetailTitle(driver);
 		
 		String Act_title=driver.getTitle();
@@ -43,7 +43,7 @@ public class IMDbTest {
 		
 		//For specific movies/known movies add assertions
 		soft.assertEquals(Release_Date,date);
-		System.out.println("All assertions passed");
+		
 		//OR
 		/*if(date.equals(Release_Date)){
 			Reporter.log("Test passed",true);
@@ -56,6 +56,7 @@ public class IMDbTest {
 		String country=imdbPage.getCountry();
 		soft.assertEquals(Country_of_Origin,country);
 		soft.assertAll();
+		System.out.println("All assertions passed");
 		
 		/*if(country.equals(Country_of_Origin)){
 			Reporter.log("Test passed",true);

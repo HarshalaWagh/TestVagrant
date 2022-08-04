@@ -3,13 +3,12 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="TestCases.IMDbTest">
+      <class name="TestCases.CompareData">
         <methods>
-          <include name="imdbTest"/>
-          <include name="closeBrowser"/>
+          <include name="getData"/>
           <include name="openBrowser"/>
         </methods>
-      </class> <!-- TestCases.IMDbTest -->
+      </class> <!-- TestCases.CompareData -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->
