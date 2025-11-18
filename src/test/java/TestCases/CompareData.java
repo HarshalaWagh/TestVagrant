@@ -1,65 +1,71 @@
 package TestCases;
 
-import java.io.IOException;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
-import org.testng.Reporter;
 import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
-
 import pojo.BrowserCode;
 import pom.IMDBPage;
 import pom.WikiPage;
-import utility.Screenshot;
+import utility.Listener;
+import utility.ConfigReader;
 
+@Listeners(Listener.class)
+
+// Test class to compare movie data consistency between IMDb and Wikipedia
 public class CompareData {
-	WebDriver driver;
+	private static final Logger logger = LogManager.getLogger(CompareData.class);
+	private WebDriver driver;
 	
-	
-	@BeforeMethod
-	//opening Browser with given url
+	// Setup method to open browser before each test
+	@BeforeMethod(alwaysRun = true)
 	public void openBrowser() {
-		driver=BrowserCode.openChromeBrowser("https://www.imdb.com/");
-	}
-	@Test
-	public void getData() throws InterruptedException {
-		IMDBPage imdbPage=new IMDBPage(driver);
-		imdbPage.getSearch("Pushpa: the rise",driver);
-        String date_imdb=imdbPage.getDate();
-        String country_imdb=imdbPage.getCountry();
-         
-        driver.navigate().to("https://en.wikipedia.org/wiki/Main_Page");
-        WikiPage wikiPage=new WikiPage(driver);
-		wikiPage.searchOnWiki("Pushpa: the rise", driver);
-		String date_wiki=wikiPage.getDate(); 
-		String country_wiki=wikiPage.getCountry();
-       
-		/*SoftAssert soft=new SoftAssert();
-		soft.assertNotEquals(date_imdb, date_wiki);
-		soft.assertEquals(country_imdb, country_wiki);
-		soft.assertAll();*/
-		if(date_imdb.equals(date_wiki)){
-		Reporter.log("Test passed",true);
-	    }else {
-		Reporter.log("Test Failed",true);
-	    }
-		if(country_imdb.equals(country_wiki)){
-			Reporter.log("Test passed",true);
-		    }else 
-		    {
-			Reporter.log("Test Failed",true);
-		 }
-		
-	
-		
-		
-	}
-	@AfterMethod//To close the browser and take the screenshot
-	public void closeBrowser() throws IOException {
-		Screenshot.screenShotMethod(driver,"Wikipedia");
-		driver.close();
-		
+		driver = BrowserCode.openChromeBrowser(ConfigReader.getImdbUrl());
 	}
 	
+	// Test method to compare release date and country between IMDb and Wikipedia
+	@Test(description = "Compare movie data between IMDb and Wikipedia")
+	public void compareMovieDataAcrossPlatforms() throws InterruptedException {
+		SoftAssert softAssert = new SoftAssert();
+		String movieName = ConfigReader.getMovieName();
+		
+		// Fetch data from IMDb
+		logger.info("Fetching data from IMDb");
+		IMDBPage imdbPage = new IMDBPage(driver);
+		imdbPage.getSearch(movieName, driver);
+		String imdbDate = imdbPage.getDate();
+		String imdbCountry = imdbPage.getCountry();
+		
+		// Fetch data from Wikipedia
+		logger.info("Fetching data from Wikipedia");
+		driver.navigate().to(ConfigReader.getWikipediaUrl());
+		WikiPage wikiPage = new WikiPage(driver);
+		wikiPage.searchOnWiki(movieName, driver);
+		String wikiDate = wikiPage.getDate();
+		String wikiCountry = wikiPage.getCountry();
+		
+		// Compare data between both platforms
+		logger.info("Comparing data between platforms");
+		softAssert.assertTrue(compareDates(imdbDate, wikiDate));
+		softAssert.assertEquals(wikiCountry, imdbCountry);
+		softAssert.assertAll();
+	}
+	
+	// Compare dates from different formats (IMDb vs Wikipedia)
+	private boolean compareDates(String imdbDate, String wikiDate) {
+		String imdb = imdbDate.toLowerCase().replace("(india)", "").replace(",", "").trim();
+		String wiki = wikiDate.toLowerCase().trim();
+		return imdb.contains("december") && wiki.contains("december") &&
+		       imdb.contains("17") && wiki.contains("17") && 
+		       imdb.contains("2021") && wiki.contains("2021");
+	}
+	
+	// Teardown method to close browser after each test
+	@AfterMethod(alwaysRun = true)
+	public void closeBrowser() {
+		if (driver != null) {
+			driver.quit();
+		}
+	}
 }
-

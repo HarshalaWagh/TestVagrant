@@ -1,55 +1,51 @@
 package TestCases;
 
-import java.io.IOException;
-import java.util.List;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
-
 import pojo.BrowserCode;
 import pom.WikiPage;
-import utility.Screenshot;
+import utility.Listener;
+import utility.ConfigReader;
 
+// Test class to validate movie information on Wikipedia
+@Listeners(Listener.class)
 public class WikipediaTest {
-	WebDriver driver;
-	WikiPage wikiPage;
-	String exp_pageTitle="Pushpa: The Rise - Wikipedia";
-	String exp_date="17 December 2021";
-	String exp_country="India";
+	private static final Logger logger = LogManager.getLogger(WikipediaTest.class);
+	private WebDriver driver;
 	
-	@BeforeMethod
+	// Setup method to open browser before each test
+	@BeforeMethod(alwaysRun = true)
 	public void openBrowser() {
-		driver=BrowserCode.openChromeBrowser("https://en.wikipedia.org/wiki/Main_Page");
+		driver = BrowserCode.openChromeBrowser(ConfigReader.getWikipediaUrl()); 
 	}
-	@Test//Testcase
-	public void WikiTest() throws InterruptedException {
-		wikiPage=new WikiPage(driver);
-		wikiPage.searchOnWiki("Pushpa: the rise", driver);
-		String act_pageTitle=wikiPage.displayTitle(driver);
-		System.out.println(act_pageTitle);
-		Assert.assertEquals(act_pageTitle,exp_pageTitle);
+	
+	// Test method to verify movie title, release date and country on Wikipedia
+	@Test(description = "Verify movie details on Wikipedia")
+	public void verifyMovieDetailsOnWikipedia() {
+		SoftAssert softAssert = new SoftAssert();
+		WikiPage wikiPage = new WikiPage(driver);
+		String movieName = ConfigReader.getMovieName();
+		
+		logger.info("Searching for movie: {}", movieName);
+		wikiPage.searchOnWiki(movieName, driver);
+		
+		Assert.assertEquals(wikiPage.displayTitle(driver), ConfigReader.getProperty("wikipedia.expected.title"));
 		wikiPage.diplayTable(driver);
 		
-		//To get Date
-		String date=wikiPage.getDate(); 
-		SoftAssert soft=new SoftAssert();
-		soft.assertEquals(exp_date, date);
-		
-		//To get the country
-		String act_country=wikiPage.getCountry();
-		soft.assertEquals(act_country, exp_country);
-		soft.assertAll();
-		System.out.println("All assertions passed");
-	}
-	@AfterMethod//To close the browser and take the screenshot
-	public void closeBrowser() throws IOException {
-		Screenshot.screenShotMethod(driver,"Wikipedia");
-		driver.close();
-		
+		softAssert.assertEquals(wikiPage.getDate(), ConfigReader.getProperty("wikipedia.expected.date"));
+		softAssert.assertEquals(wikiPage.getCountry(), ConfigReader.getProperty("wikipedia.expected.country"));
+		softAssert.assertAll();
 	}
 	
+	// Teardown method to close browser after each test
+	@AfterMethod(alwaysRun = true)
+	public void closeBrowser() {
+		if (driver != null) {
+			driver.quit();
+		}
+	}
 }

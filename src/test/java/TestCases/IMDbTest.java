@@ -1,75 +1,50 @@
 package TestCases;
 
-import java.io.IOException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
-import org.testng.Reporter;
 import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
-
 import pojo.BrowserCode;
 import pom.IMDBPage;
-import utility.Screenshot;
+import utility.Listener;
+import utility.ConfigReader;
 
+// Test class to validate movie information on IMDb
+@Listeners(Listener.class)
 public class IMDbTest {
-   WebDriver driver;
-   IMDBPage imdbPage;
-   String Exp_title="Pushpa: The Rise - Part 1 (2021) - IMDb";
-   String Release_Date="December 17, 2021 (India)";
-   String Country_of_Origin="India";
-   
-	@BeforeMethod
-	//opening Browser with given url
+	private static final Logger logger = LogManager.getLogger(IMDbTest.class);
+	private WebDriver driver;
+	
+	// Setup method to open browser before each test
+	@BeforeMethod(alwaysRun = true)
 	public void openBrowser() {
-		driver=BrowserCode.openChromeBrowser("https://www.imdb.com/");
+		driver = BrowserCode.openChromeBrowser(ConfigReader.getImdbUrl());
 	}
 	
-	@Test//testcase
-	public void imdbTest() throws InterruptedException {
+	// Test method to verify movie title, release date and country on IMDb
+	@Test(description = "Verify movie details on IMDb")
+	public void verifyMovieDetailsOnIMDb() throws InterruptedException {
+		SoftAssert softAssert = new SoftAssert();
+		IMDBPage imdbPage = new IMDBPage(driver);
+		String movieName = ConfigReader.getMovieName();
 		
-		imdbPage=new IMDBPage(driver);
-		imdbPage.getSearch("Pushpa: the rise",driver);
-		Boolean display=imdbPage.scrollToDetailTitle(driver);
+		logger.info("Searching for movie: {}", movieName);
+		imdbPage.getSearch(movieName, driver);
 		
-		String Act_title=driver.getTitle();
-		System.out.println(Act_title);
-		Assert.assertEquals(Exp_title,Act_title);
-		
-		SoftAssert soft=new SoftAssert();
-		soft.assertTrue(display);
-		
-		//To get the Date
-		String date=imdbPage.getDate();
-		
-		//For specific movies/known movies add assertions
-		soft.assertEquals(Release_Date,date);
-		
-		//OR
-		/*if(date.equals(Release_Date)){
-			Reporter.log("Test passed",true);
-		}else {
-			Reporter.log("Test Failed",true);
-		}
-		*/
-		
-		//To get the country
-		String country=imdbPage.getCountry();
-		soft.assertEquals(Country_of_Origin,country);
-		soft.assertAll();
-		System.out.println("All assertions passed");
-		
-		/*if(country.equals(Country_of_Origin)){
-			Reporter.log("Test passed",true);
-		}
-		else {
-			Reporter.log("Test Failed",true);
-		}*/
-	}
-	@AfterMethod//To close the browser and take the screenshot
-	public void closeBrowser() throws IOException {
-		Screenshot.screenShotMethod(driver,"IMDb");
-		driver.close();
-		
+		Assert.assertEquals(driver.getTitle(), ConfigReader.getProperty("imdb.expected.title"));
+		softAssert.assertTrue(imdbPage.scrollToDetailTitle(driver));
+		softAssert.assertEquals(imdbPage.getDate(), ConfigReader.getProperty("imdb.expected.date"));
+		softAssert.assertEquals(imdbPage.getCountry(), ConfigReader.getProperty("imdb.expected.country"));
+		softAssert.assertAll();
 	}
 	
+	// Teardown method to close browser after each test
+	@AfterMethod(alwaysRun = true)
+	public void closeBrowser() {
+		if (driver != null) {
+			driver.quit();
+		}
+	}
 }

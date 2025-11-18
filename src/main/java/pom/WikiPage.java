@@ -1,83 +1,80 @@
 package pom;
 
-import java.time.Duration;
-import java.util.List;
-
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-//POM Class
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.ElementNotInteractableException;
+import utility.WaitHelper;
+
+// Page Object Model for Wikipedia website
 public class WikiPage {
 	
-	//Declaration of all the datamembers globally & restricted to private with private access specifier
-	@FindBy(xpath="//input[@id='searchInput']")private WebElement searchWiki;
-	@FindBy(xpath="//div[@class='suggestions-result']")private List<WebElement> pMovieList;
-	@FindBy(xpath="//h1[@id='firstHeading']")private WebElement newPageHeaeding;
-	//@FindBy(xpath="//table[@class='infobox vevent']")private WebElement table;
-	//@FindBy(xpath="//table[@class='infobox vevent']//tbody//tr")private List<WebElement> rowCount;
-	//@FindBy(xpath="//table[@class='infobox vevent']//tbody//tr//th")private List<WebElement> colCount;
-	//@FindBy(xpath="(//table//div[@class='plainlist'])[4]")private WebElement date;
-	@FindBy(xpath="(//td[@class='infobox-data'])[10]")private WebElement date;
-	//@FindBy(xpath="(//table[@class='infobox vevent']/tbody//tr//td)[13]")private WebElement country;
-	@FindBy(xpath="(//td[@class='infobox-data'])[12]")private WebElement country;
-	WebDriver driver;
+	// Locator for Wikipedia search input box
+	@FindBy(xpath="//input[@name='search' and @type='search']")private WebElement searchWiki;
+	// Locator for release date in movie infobox
+	@FindBy(xpath="//*[contains(text(),'Release date')]/parent::*/following-sibling::*[1]")private WebElement date;
+	// Locator for country in movie infobox
+	@FindBy(xpath="//table[contains(@class,'infobox')]//tr[.//th[contains(normalize-space(),'Country')]]/td")private WebElement country;
+	// Locator for specific search result containing 'The Rise'
+	@FindBy(xpath="//div[contains(@class,'mw-search-result-heading')]//a[contains(@title,'The Rise') or contains(text(),'The Rise')]")private WebElement specificSearchResult;
+	// Locator for first search result as fallback
+	@FindBy(xpath="(//div[contains(@class,'mw-search-result-heading')]//a)[1]")private WebElement firstSearchResult;
 	
-	/*To initialize the elements in Pagefactory,we have to write this initElements static method of Pagefactory
-	inside the constructor*/
+	// Constructor to initialize page elements
 	public WikiPage(WebDriver driver) {
 		PageFactory.initElements(driver,this);
 	}
 	
-	//Entering the moviename inside the searchbox
-	public void searchOnWiki(String MovieName,WebDriver driver) throws InterruptedException {
-		searchWiki.sendKeys(MovieName);
-		Thread.sleep(2000);
+	// Search for a movie on Wikipedia and handle search results page
+	public void searchOnWiki(String movieName, WebDriver driver) {
+		Wait<WebDriver> wait = WaitHelper.getFluentWait(driver);
+		String currentUrl = driver.getCurrentUrl();
 		
-		//List of all auto-suggestion movie
-		System.out.println(pMovieList.size());
+		wait.until(driver1 -> {
+			try {
+				searchWiki.clear();
+				searchWiki.sendKeys(movieName);
+				searchWiki.sendKeys(Keys.ENTER);
+				return true;
+			} catch (StaleElementReferenceException | ElementNotInteractableException e) {
+				return false;
+			}
+		});
 		
-		//Iterate the list till we get desired movie
-		for(int i=0;i<pMovieList.size();i++) {
-			WebElement movie=pMovieList.get(i);
-			String moviename=movie.getText();
-			
-			//Compare the movie with, as we given in movieName
-			if(moviename.equalsIgnoreCase(MovieName)) {
-				Actions act=new Actions(driver);
-				act.moveToElement(movie).perform();
-				act.click().perform();
+		wait.until(driver1 -> !driver.getCurrentUrl().equals(currentUrl));
+		
+		if (driver.getTitle().contains("Search results")) {
+			try {
+				wait.until(ExpectedConditions.elementToBeClickable(specificSearchResult)).click();
+			} catch (Exception e) {
+				wait.until(ExpectedConditions.elementToBeClickable(firstSearchResult)).click();
 			}
 		}
 	}
+	
+	// Get current page title
 	public String displayTitle(WebDriver driver) {
 		return driver.getTitle();
 	}
-	//For scrolling to details part which contains date and released date
+	
+	// Scroll down to view movie details table
 	public void diplayTable(WebDriver driver) {
 		((JavascriptExecutor)driver).executeScript("window.scrollBy(0,400)");
-		/*int rowSize=rowCount.size();
-		System.out.println(rowSize);
-		int colSize=colCount.size();
-		System.out.println(colSize);*/
-		
 	}
-	 //To findout the released date
+	
+	// Get release date text from infobox
 	public String getDate() {
-		String dd=date.getText();//11c,12r
-		System.out.println(dd);
-		return dd;
+		return date.getText();
 	}
-	//To findout the origin of country
+	
+	// Get country text from infobox
 	public String getCountry() {
-		String cc=country.getText();
-		System.out.println(cc);
-		return cc;
+		return country.getText();
 	}
-
 }

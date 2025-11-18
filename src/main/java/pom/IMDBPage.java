@@ -1,79 +1,57 @@
 package pom;
 
-import java.time.Duration;
-import java.util.List;
-
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.Wait;
+import utility.WaitHelper;
 
+// Page Object Model for IMDb website
 public class IMDBPage {
 	
-	//Declaration of all the datamembers globally & restricted to private with private access specifier
-	@FindBy(xpath="//input[@id='suggestion-search']")private WebElement searchIMDb;
-	@FindBy(xpath="//a[contains(@class,'const')]")private List<WebElement> movieList;
-	@FindBy(xpath="//a[@data-testid='search-result--link']")private WebElement mList;
-	@FindBy(xpath="(//h3[@class='ipc-title__text'])[8]")private WebElement details;
-	@FindBy(xpath="(//a[@data-testid='search-result--const'])[1]")private WebElement mName;
-	@FindBy(xpath="(//a[contains(@href,'/releaseinfo?ref_=tt_dt_rdat')])[2]")private WebElement date;
-    @FindBy(xpath="//a[contains(@href,'/search/title/?country_of_origin')]")private WebElement country;
-	WebDriver driver;
+	// Locator for IMDb search input box
+	@FindBy(xpath="//input[@id='suggestion-search' and @name='q']")private WebElement searchIMDb; 
+	// Locator for first movie result in search suggestions
+	@FindBy(xpath="(//div[@role='presentation']//a[contains(@href,'/title/tt')])[1]")private WebElement mName; 
+	// Locator for movie title on details page
+	@FindBy(xpath="//h1[@data-testid='hero__pageTitle']//span[1]")private WebElement details;
+	// Locator for release date link
+	@FindBy(xpath="//a[contains(@href,'releaseinfo') and contains(text(),'(')]")private WebElement date; 
+	// Locator for country of origin link
+	@FindBy(xpath="//a[contains(@href,'country_of_origin') and not(contains(@href,'sort'))]")private WebElement country; 
 	
-	/*To initialize the elements in Pagefactory,we have to write this initElements static method of Pagefactory
-	inside the constructor*/
+	// Constructor to initialize page elements
 	public IMDBPage(WebDriver driver) {
 		PageFactory.initElements(driver,this);
 	}
 	
-	//Entering the moviename inside the searchbox
-     public void getSearch(String movieName,WebDriver driver) throws InterruptedException {
-	 searchIMDb.sendKeys(movieName);
-	 Thread.sleep(3000);
-	//By directly clicking on the film
-		 Actions act=new Actions(driver);
-		 act.moveToElement(mName).click().build().perform();
-	 
-	//List of all auto-suggestion movie
-	/* System.out.println(movieList.size());
-	 
-	 //Iterate the list till we get desired movie
-	 for(int i=0;i<movieList.size();i++) {
-		 WebElement mName=movieList.get(i);
-		 String Mname=mName.getText();
-		 System.out.println(Mname);
-		 
-		//Compare the movie with, as we given in movieName
-		 if(Mname.equals(movieName)) {
-			 Actions act=new Actions(driver);
-			 act.moveToElement(mName).perform();
-			 act.click().perform();
-		 }
+	// Search for a movie and navigate to its details page
+	public void getSearch(String movieName, WebDriver driver) throws InterruptedException {
+		Wait<WebDriver> wait = WaitHelper.getFluentWait(driver);
+		wait.until(ExpectedConditions.visibilityOf(searchIMDb));
+		searchIMDb.clear();
+		searchIMDb.sendKeys(movieName);
+		Thread.sleep(2000);
+		wait.until(ExpectedConditions.elementToBeClickable(mName)).click();
+		wait.until(ExpectedConditions.visibilityOf(details));
+	}
 	
-	 }*/
-	 
- }
- //For scrolling to details part which contains date and released date
- public Boolean scrollToDetailTitle(WebDriver driver){
-	 ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);",details);
-	 return details.isDisplayed();
-	 
- }
- //To findout the released date
- public String getDate() {
-	 String dd=date.getText();
-	 System.out.println(dd);
-	return dd;
-	 
- }
- //To findout the origin of country
- public String getCountry() {
-	 String cc=country.getText();
-	 System.out.println(cc);
-	return cc;
- }
+	// Scroll to movie details section and verify visibility
+	public Boolean scrollToDetailTitle(WebDriver driver){
+		((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);", details);
+		return details.isDisplayed();
+	}
+	
+	// Get release date text from movie details
+	public String getDate() {
+		return date.getText();
+	}
+	
+	// Get country of origin text from movie details
+	public String getCountry() {
+		return country.getText();
+	}
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="TestVagrant Movie Details Automation Suite" verbose="1">
+    <test name="Movie Details Validation Tests" preserve-order="true">
+        <classes>
+            <!-- Test 1: Verify movie details on Wikipedia -->
+            <class name="TestCases.WikipediaTest">
+                <methods>
+                    <include name="verifyMovieDetailsOnWikipedia"/>
+                </methods>
+            </class>
+            
+            <!-- Test 2: Verify movie details on IMDb -->
+            <class name="TestCases.IMDbTest">
+                <methods>
+                    <include name="verifyMovieDetailsOnIMDb"/>
+                </methods>
+            </class>
+            
+            <!-- Test 3: Compare data between IMDb and Wikipedia -->
+            <class name="TestCases.CompareData">
+                <methods>
+                    <include name="compareMovieDataAcrossPlatforms"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
+
