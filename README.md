@@ -1,5 +1,4 @@
-# TestVagrant - Movie Details Automation Framework
-
+# TestVagrant
 ## Overview
 
 Selenium WebDriver test automation framework built with Java, Maven, and TestNG. Validates movie information across IMDb and Wikipedia and compares data consistency between platforms.
@@ -31,7 +30,7 @@ mvn clean install -DskipTests
 mvn test
 
 # Generate Allure report
-mvn allure:serve
+mvn allure: serve
 ```
 
 ---
